@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGIS Pendidikan SMP Kabupaten Probolinggo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* WARNA UTAMA DAN VARIABEL */
+        :root {
+            --blue-light: #e8f4fc;
+            --blue-main: #0c6fb4;
+            --blue-dark: #084d7d;
+            --blue-accent: #5dade2;
+            --green-accent: #2ecc71;
+            --orange-accent: #e67e22;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        /* RESET DAN BODY */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5fdff, #e8f4fc);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* NAVBAR */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--glass-white);
+            backdrop-filter: blur(12px);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        nav {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--blue-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo i {
+            color: var(--blue-main);
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: var(--blue-dark);
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+            position: relative;
+            font-size: 15px;
+        }
+        nav ul li a:hover {
+            color: white;
+            background: var(--blue-main);
+            transform: translateY(-2px);
+        }
+        nav ul li a.active {
+            color: white;
+            background: var(--blue-main);
+        }
+        /* Hamburger Menu untuk Mobile */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--blue-dark);
+            margin: 3px 0;
+            transition: var(--transition);
+        }
+        @media (max-width: 768px) {
+            nav ul {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--glass-white);
+                flex-direction: column;
+                gap: 0;
+                padding: 20px 0;
+                box-shadow: var(--shadow);
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: var(--transition);
+            }
+            nav ul.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            nav ul li {
+                text-align: center;
+                padding: 10px 0;
+            }
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            padding-top: 80px;
+            background: linear-gradient(rgba(12, 111, 180, 0.7), rgba(8, 77, 125, 0.8)), 
+                        url('https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') no-repeat center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+        .hero h1 {
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 20px;
+            color: white;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .hero p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        .btn {
+            padding: 14px 32px;
+            background: var(--green-accent);
+            color: white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            margin-left: 15px;
+        }
+        .btn-outline:hover {
+            background: white;
+            color: var(--blue-main);
+        }
+
+        /* SECTION KONTEN */
+        .section {
+            width: 90%;
+            max-width: 1200px;
+            margin: 80px auto;
+            background: white;
+            padding: 50px 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 32px;
+            color: var(--blue-dark);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--blue-main);
+            border-radius: 2px;
+        }
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        h3 {
+            font-size: 22px;
+            color: var(--blue-dark);
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        /* GRAFIK SECTION */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+        }
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--blue-accent);
+        }
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* TABEL SECTION */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid #eaeaea;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        .data-table th {
+            background: var(--blue-main);
+            color: white;
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .data-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .data-table tr:hover {
+            background-color: #f0f7ff;
+        }
+        .data-table th:first-child {
+            border-top-left-radius: var(--radius);
+        }
+        .data-table th:last-child {
+            border-top-right-radius: var(--radius);
+        }
+        .highlight {
+            font-weight: 600;
+            color: var(--blue-dark);
+        }
+        /* Style for data to be filled by JS */
+        .js-data {
+            font-weight: 700;
+            color: var(--blue-dark);
+        }
+        .stat-card h3.js-data {
+            font-size: 28px;
+        }
+
+        /* PETA SECTION - TAB STYLE */
+        .tabs-container {
+            margin-top: 30px;
+        }
+        .tabs-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 12px 24px;
+            background: #f0f7ff;
+            border: 1px solid var(--blue-accent);
+            border-radius: var(--radius);
+            color: var(--blue-dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+        .tab-btn:hover {
+            background: var(--blue-accent);
+            color: white;
+        }
+        .tab-btn.active {
+            background: var(--blue-main);
+            color: white;
+            border-color: var(--blue-main);
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-content h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .map-container {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        /* STATISTIK */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid #f0f0f0;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        .stat-card i {
+            font-size: 36px;
+            color: var(--blue-main);
+            margin-bottom: 15px;
+        }
+        .stat-card h3 {
+            font-size: 28px;
+            color: var(--blue-dark);
+            margin-bottom: 8px;
+        }
+        .stat-card p {
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        /* CONTACT FORM - BAGIAN YANG DIPERBAIKI */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            border-radius: var(--radius);
+            background: #f8fafc;
+            transition: var(--transition);
+            border-left: 4px solid var(--blue-accent);
+        }
+        .contact-item:hover {
+            background: #f0f7ff;
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        .contact-item i {
+            font-size: 22px;
+            color: var(--blue-main);
+            margin-top: 3px;
+            min-width: 24px;
+        }
+        .contact-item div h4 {
+            font-size: 18px;
+            color: var(--blue-dark);
+            margin-bottom: 8px;
+        }
+        .contact-item div p {
+            color: #666;
+            margin-bottom: 0;
+            font-size: 15px;
+        }
+        .contact-form {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--green-accent);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--blue-dark);
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: white;
+            font-family: 'Poppins', sans-serif;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--blue-accent);
+            box-shadow: 0 0 0 3px rgba(12, 111, 180, 0.1);
+            outline: none;
+            background: white;
+        }
+        .contact-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        .contact-form button {
+            width: 100%;
+            padding: 14px;
+            background: var(--blue-main);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .contact-form button:hover {
+            background: var(--blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        .form-success {
+            display: none;
+            background: var(--green-accent);
+            color: white;
+            padding: 15px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--blue-dark);
+            color: white;
+            margin-top: 80px;
+            position: relative;
+        }
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--blue-accent);
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        footer p {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 25px 0;
+        }
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .footer-links a:hover {
+            color: white;
+        }
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .social-links a {
+            color: white;
+            font-size: 20px;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .social-links a:hover {
+            background: var(--blue-accent);
+            transform: translateY(-3px);
+        }
+
+        /* ANIMASI */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        /* RESPONSIVITAS UMUM */
+        @media (max-width: 1024px) {
+            .section {
+                padding: 40px 30px;
+            }
+            h2 {
+                font-size: 28px;
+            }
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 42px;
+            }
+        }
+        @media (max-width: 768px) {
+            .chart-wrapper {
+                height: 280px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .hero h1 {
+                font-size: 36px;
+            }
+            .hero p {
+                font-size: 18px;
+            }
+            .btn-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+            .btn-outline {
+                margin-left: 0;
+            }
+            .tabs-header {
+                flex-direction: column;
+            }
+            .tab-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        @media (max-width: 480px) {
+            .section {
+                padding: 30px 20px;
+                margin: 60px auto;
+            }
+            h2 {
+                font-size: 24px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .chart-card {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <h2 class="logo"><i class="fas fa-map-marked-alt"></i> Sistem Informasi Geografis</h2>
+            <ul id="nav-menu">
+                <li><a href="#beranda" class="active"><i class="fas fa-home"></i> Beranda</a></li>
+                <li><a href="#latar"><i class="fas fa-info-circle"></i> Latar Belakang</a></li>
+                <li><a href="#statistik"><i class="fas fa-chart-bar"></i> Statistik</a></li>
+                <li><a href="#grafik"><i class="fas fa-chart-line"></i> Grafik</a></li>
+                <li><a href="#tabel"><i class="fas fa-table"></i> Tabel Data</a></li>
+                <li><a href="#peta"><i class="fas fa-map"></i> Peta</a></li>
+                <li><a href="#kontak"><i class="fas fa-envelope"></i> Kontak</a></li>
+            </ul>
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <section id="beranda" class="hero">
+        <div class="hero-content fade-in">
+            <h1>Persebaran Pendidikan SMP di Kabupaten Probolinggo</h1>
+            <p>Visualisasi Data Sekolah, Guru, dan Murid Berbasis WebGIS</p>
+            <div class="btn-container">
+                <a href="#peta" class="btn"><i class="fas fa-map"></i> Jelajahi Peta</a>
+                <a href="#statistik" class="btn btn-outline"><i class="fas fa-chart-bar"></i> Lihat Statistik</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="latar" class="section">
+        <div class="section-header">
+            <h2>Latar Belakang</h2>
+            <p class="section-subtitle">Analisis Data Pendidikan SMP di Kabupaten Probolinggo Tahun Ajaran 2024/2025</p>
+        </div>
+        
+        <p>Data "Jumlah Sekolah, Guru, dan Murid Sekolah Menengah Pertama (SMP) di Bawah Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi Menurut Kecamatan di Kabupaten Probolinggo Tahun Ajaran 2024/2025" memberikan gambaran menyeluruh mengenai kondisi penyelenggaraan pendidikan jenjang SMP di Kabupaten Probolinggo.</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-school"></i>
+                <h3 id="totalSekolah" class="js-data">218</h3>
+                <p>Total Sekolah SMP</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h3 id="totalGuru" class="js-data">2,312</h3>
+                <p>Total Guru SMP</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-graduate"></i>
+                <h3 id="totalMurid" class="js-data">31,094</h3>
+                <p>Total Murid SMP</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-map-marker-alt"></i>
+                <h3 id="totalKecamatan" class="js-data">24</h3>
+                <p>Kecamatan</p>
+            </div>
+        </div>
+        
+        <h3>Analisis Data Pendidikan</h3>
+        <p><strong>Distribusi Sekolah:</strong> Terdapat <span id="sekolahNegeriCount" class="js-data">74</span> sekolah negeri dan <span id="sekolahSwastaCount" class="js-data">144</span> sekolah swasta, menunjukkan dominasi sektor swasta dalam penyediaan pendidikan SMP di Kabupaten Probolinggo dengan persentase <span id="dominasiSwastaPersen" class="js-data">66.1%</span> sekolah merupakan swasta.</p>
+        
+        <p><strong>Distribusi Guru:</strong> Jumlah guru di sekolah negeri (<span id="guruNegeriCount" class="js-data">1,211</span>) sedikit lebih tinggi dibanding sekolah swasta (<span id="guruSwastaCount" class="js-data">1,101</span>).</p>
+        
+        <p><strong>Distribusi Murid:</strong> Sekolah negeri menampung <span id="muridNegeriCount" class="js-data">17,383</span> murid (<span id="muridNegeriPersen" class="js-data">56%</span>) sedangkan sekolah swasta menampung <span id="muridSwastaCount" class="js-data">13,711</span> murid (<span id="muridSwastaPersen" class="js-data">44%</span>), menunjukkan kepercayaan masyarakat terhadap pendidikan negeri masih cukup tinggi.</p>
+        
+        <p>Pemanfaatan data ini di dalam platform WebGIS diharapkan dapat mendukung proses pengambilan keputusan berbasis spasial, meningkatkan pemahaman terhadap pemerataan layanan pendidikan, serta membantu pemerintah daerah dan lembaga terkait dalam mengembangkan kebijakan pendidikan yang lebih efektif dan tepat sasaran.</p>
+    </section>
+
+    <section id="statistik" class="section">
+        <div class="section-header">
+            <h2>Statistik Pendidikan</h2>
+            <p class="section-subtitle">Ringkasan Data Pendidikan SMP di Kabupaten Probolinggo</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-building"></i>
+                <h3 id="statSekolahNegeri" class="js-data">74</h3>
+                <p>Sekolah Negeri</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-hands-helping"></i>
+                <h3 id="statSekolahSwasta" class="js-data">144</h3>
+                <p>Sekolah Swasta</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-balance-scale"></i>
+                <h3 id="statDominasiSwasta" class="js-data">66.1%</h3>
+                <p>Dominasi Swasta</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-percentage"></i>
+                <h3 id="statRasioGuruMurid" class="js-data">1:13.4</h3>
+                <p>Rasio Murid:Guru</p>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-male"></i>
+                <h3 id="statGuruNegeri" class="js-data">1,211</h3>
+                <p>Guru Negeri</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-female"></i>
+                <h3 id="statGuruSwasta" class="js-data">1,101</h3>
+                <p>Guru Swasta</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-friends"></i>
+                <h3 id="statMuridNegeri" class="js-data">17,383</h3>
+                <p>Murid Negeri</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-user-graduate"></i>
+                <h3 id="statMuridSwasta" class="js-data">13,711</h3>
+                <p>Murid Swasta</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="grafik" class="section">
+        <div class="section-header">
+            <h2>Visualisasi Data</h2>
+            <p class="section-subtitle">Grafik Interaktif Data Pendidikan SMP Kabupaten Probolinggo</p>
+        </div>
+        
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>Perbandingan Sekolah Negeri vs Swasta</h3>
+                <div class="chart-wrapper">
+                    <canvas id="schoolTypeChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>10 Kecamatan dengan Murid Terbanyak</h3>
+                <div class="chart-wrapper">
+                    <canvas id="topStudentsChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Distribusi Jumlah Sekolah per Kecamatan (Terbanyak)</h3>
+                <div class="chart-wrapper">
+                    <canvas id="schoolsChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Perbandingan Guru Negeri vs Swasta</h3>
+                <div class="chart-wrapper">
+                    <canvas id="teacherTypeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tabel" class="section">
+        <div class="section-header">
+            <h2>Tabel Data Lengkap</h2>
+            <p class="section-subtitle">Data Jumlah Sekolah, Guru, dan Murid SMP per Kecamatan</p>
+        </div>
+        
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Kecamatan</th>
+                        <th>Sekolah Negeri</th>
+                        <th>Sekolah Swasta</th>
+                        <th class="highlight">Total Sekolah</th>
+                        <th>Guru Negeri</th>
+                        <th>Guru Swasta</th>
+                        <th class="highlight">Total Guru</th>
+                        <th>Murid Negeri</th>
+                        <th>Murid Swasta</th>
+                        <th class="highlight">Total Murid</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section id="peta" class="section">
+        <div class="section-header">
+            <h2>Peta Interaktif</h2>
+            <p class="section-subtitle">Visualisasi Spasial Persebaran Pendidikan SMP di Kabupaten Probolinggo</p>
+        </div>
+        
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="openTab('tab1', this)"><i class="fas fa-map"></i> Peta Sekolah</button>
+                <button class="tab-btn" onclick="openTab('tab2', this)"><i class="fas fa-users"></i> Peta Guru</button>
+                <button class="tab-btn" onclick="openTab('tab3', this)"><i class="fas fa-graduation-cap"></i> Peta Murid</button>
+                <button class="tab-btn" onclick="openTab('tab4', this)"><i class="fas fa-school"></i> Peta Sekolah (Detail)</button>
+            </div>
+            
+            <div class="tab-content active" id="tab1">
+                <h3>Peta Persebaran Sekolah SMP (Choropleth Total Sekolah)</h3>
+                <p>Peta ini menampilkan lokasi dan distribusi SMP Negeri dan Swasta di seluruh Kabupaten Probolinggo.</p>
+                <div class="map-container">
+                    <iframe src="Peta Kecamatan Kab Probolinggo/petakecamatan.html" width="100%" height="500px" style="border:none;"></iframe>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab2">
+                <h3>Peta Distribusi Guru SMP (Choropleth Total Guru)</h3>
+                <p>Visualisasi kerapatan dan distribusi guru SMP per kecamatan di Kabupaten Probolinggo.</p>
+                <div class="map-container">
+                    <iframe src="Jumlah guru negeri dan swasta/peta-guru.html" width="100%" height="500px" style="border:none;"></iframe>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tab3">
+                <h3>Peta Distribusi Murid SMP (Choropleth Total Murid)</h3>
+                <p>Peta sebaran jumlah murid SMP di setiap kecamatan Kabupaten Probolinggo.</p>
+                <div class="map-container">
+                    <iframe src="Jumlah murid negeri dan swasta/peta-murid.html" width="100%" height="500px" style="border:none;"></iframe>
+                </div>
+            </div>
+
+            <div class="tab-content" id="tab4">
+                <h3>Peta Distribusi Sekolah SMP (Bubble Map Negeri vs Swasta)</h3>
+                <p>Peta sebaran jumlah Sekolah SMP di setiap kecamatan Kabupaten Probolinggo.</p>
+                <div class="map-container">
+                    <iframe src="Jumlah sekolah negeri dan swasta/peta-sekolah.html" width="100%" height="500px" style="border:none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontak" class="section">
+        <div class="section-header">
+            <h2>Kontak Kami</h2>
+            <p class="section-subtitle">Hubungi kami untuk informasi lebih lanjut</p>
+        </div>
+        
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Alamat Kantor Dinas Pendidikan</h4>
+                        <p>Jl. Raya Panglima Sudirman No. 123, Probolinggo, Jawa Timur, Indonesia</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h4>Telepon</h4>
+                        <p>(0335) 432-100</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>Email</h4>
+                        <p>disdik@probolinggokab.go.id</p>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form">
+                <h3>Kirim Pesan kepada Kami</h3>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Nama Lengkap</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subjek</label>
+                        <input type="text" id="subject" name="subject" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Pesan</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit">
+                        <i class="fas fa-paper-plane"></i> Kirim Pesan
+                    </button>
+                    <div class="form-success" id="formSuccessMessage">
+                        <i class="fas fa-check-circle"></i> Pesan Anda berhasil terkirim!
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2024 WebGIS Pendidikan SMP Kabupaten Probolinggo. Data bersumber dari <a href="https://probolinggokab.go.id/" target="_blank" style="color: var(--blue-accent); text-decoration: underline;">Dinas Pendidikan Kabupaten Probolinggo</a>.</p>
+            <div class="footer-links">
+                <a href="#beranda">Beranda</a>
+                <a href="#statistik">Statistik</a>
+                <a href="#tabel">Tabel Data</a>
+                <a href="#peta">Peta</a>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        // Data yang diolah dari CSV (dikonversi dari JSON)
+        const data = {
+            "stats": {
+                "total_sekolah_all": 218,
+                "total_guru_all": 2312,
+                "total_murid_all": 31094,
+                "total_kecamatan": 24,
+                "total_sekolah_negeri": 74,
+                "total_sekolah_swasta": 144,
+                "dominasi_swasta_percentage": 66.1,
+                "rasio_guru_murid": 13.4,
+                "total_guru_negeri": 1211,
+                "total_guru_swasta": 1101,
+                "total_murid_negeri": 17383,
+                "total_murid_swasta": 13711
+            },
+            "school_type_data": {
+                "labels": [
+                    "Sekolah Negeri",
+                    "Sekolah Swasta"
+                ],
+                "data": [
+                    74,
+                    144
+                ]
+            },
+            "top_students_data": {
+                "labels": [
+                    "Leces",
+                    "Kraksaan",
+                    "Banyuanyar",
+                    "Tiris",
+                    "Paiton",
+                    "Besuk",
+                    "Dringu",
+                    "Gending",
+                    "Gading",
+                    "Sukapura"
+                ],
+                "data": [
+                    1576,
+                    1563,
+                    1297,
+                    1431,
+                    1268,
+                    1005,
+                    969,
+                    918,
+                    898,
+                    778
+                ]
+            },
+            "schools_chart_data": {
+                "labels": [
+                    "Tiris",
+                    "Banyuanyar",
+                    "Paiton",
+                    "Besuk",
+                    "Kraksaan",
+                    "Gending",
+                    "Leces",
+                    "Gading",
+                    "Krejengan",
+                    "Sukapura",
+                    "Maron",
+                    "Dringu",
+                    "Krucil",
+                    "Bantaran",
+                    "Lumbang",
+                    "Kotaanyar",
+                    "Pakuniran",
+                    "Kuripan",
+                    "Tegalsiwalan",
+                    "Wonomerto",
+                    "Tongas",
+                    "Sumber",
+                    "Klakah",
+                    "Sukapura"
+                ],
+                "data": [
+                    19,
+                    16,
+                    13,
+                    12,
+                    12,
+                    11,
+                    11,
+                    11,
+                    10,
+                    9,
+                    9,
+                    9,
+                    8,
+                    8,
+                    7,
+                    7,
+                    6,
+                    6,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    9
+                ]
+            },
+            "teacher_type_data": {
+                "labels": [
+                    "Guru Negeri",
+                    "Guru Swasta"
+                ],
+                "data": [
+                    1211,
+                    1101
+                ]
+            },
+            "table_data": [
+                {
+                    "Kecamatan": "Sukapura",
+                    "Jumlah Sekolah SMP (Negeri)": 8,
+                    "Jumlah Sekolah SMP (Swasta)": 1,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 9,
+                    "Jumlah Guru SMP (Negeri)": 77,
+                    "Jumlah Guru SMP (Swasta)": 8,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 85,
+                    "Jumlah Murid SMP (Negeri)": 740,
+                    "Jumlah Murid SMP (Swasta)": 38,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 778
+                },
+                {
+                    "Kecamatan": "Sumber",
+                    "Jumlah Sekolah SMP (Negeri)": 5,
+                    "Jumlah Sekolah SMP (Swasta)": 0,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 5,
+                    "Jumlah Guru SMP (Negeri)": 57,
+                    "Jumlah Guru SMP (Swasta)": 0,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 57,
+                    "Jumlah Murid SMP (Negeri)": 668,
+                    "Jumlah Murid SMP (Swasta)": 0,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 668
+                },
+                {
+                    "Kecamatan": "Kuripan",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 3,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 6,
+                    "Jumlah Guru SMP (Negeri)": 30,
+                    "Jumlah Guru SMP (Swasta)": 25,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 55,
+                    "Jumlah Murid SMP (Negeri)": 284,
+                    "Jumlah Murid SMP (Swasta)": 244,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 528
+                },
+                {
+                    "Kecamatan": "Bantaran",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 6,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 8,
+                    "Jumlah Guru SMP (Negeri)": 26,
+                    "Jumlah Guru SMP (Swasta)": 40,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 66,
+                    "Jumlah Murid SMP (Negeri)": 358,
+                    "Jumlah Murid SMP (Swasta)": 394,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 752
+                },
+                {
+                    "Kecamatan": "Leces",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 9,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 11,
+                    "Jumlah Guru SMP (Negeri)": 50,
+                    "Jumlah Guru SMP (Swasta)": 69,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 119,
+                    "Jumlah Murid SMP (Negeri)": 878,
+                    "Jumlah Murid SMP (Swasta)": 698,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 1576
+                },
+                {
+                    "Kecamatan": "Tegalsiwalan",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 3,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 5,
+                    "Jumlah Guru SMP (Negeri)": 39,
+                    "Jumlah Guru SMP (Swasta)": 22,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 61,
+                    "Jumlah Murid SMP (Negeri)": 605,
+                    "Jumlah Murid SMP (Swasta)": 96,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 701
+                },
+                {
+                    "Kecamatan": "Banyuanyar",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 14,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 16,
+                    "Jumlah Guru SMP (Negeri)": 38,
+                    "Jumlah Guru SMP (Swasta)": 92,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 130,
+                    "Jumlah Murid SMP (Negeri)": 585,
+                    "Jumlah Murid SMP (Swasta)": 712,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 1297
+                },
+                {
+                    "Kecamatan": "Tiris",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 16,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 19,
+                    "Jumlah Guru SMP (Negeri)": 39,
+                    "Jumlah Guru SMP (Swasta)": 99,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 138,
+                    "Jumlah Murid SMP (Negeri)": 579,
+                    "Jumlah Murid SMP (Swasta)": 852,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 1431
+                },
+                {
+                    "Kecamatan": "Krucil",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 6,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 8,
+                    "Jumlah Guru SMP (Negeri)": 29,
+                    "Jumlah Guru SMP (Swasta)": 43,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 72,
+                    "Jumlah Murid SMP (Negeri)": 403,
+                    "Jumlah Murid SMP (Swasta)": 358,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 761
+                },
+                {
+                    "Kecamatan": "Gading",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 8,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 11,
+                    "Jumlah Guru SMP (Negeri)": 51,
+                    "Jumlah Guru SMP (Swasta)": 48,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 99,
+                    "Jumlah Murid SMP (Negeri)": 609,
+                    "Jumlah Murid SMP (Swasta)": 289,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 898
+                },
+                {
+                    "Kecamatan": "Pakuniran",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 4,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 6,
+                    "Jumlah Guru SMP (Negeri)": 31,
+                    "Jumlah Guru SMP (Swasta)": 31,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 62,
+                    "Jumlah Murid SMP (Negeri)": 386,
+                    "Jumlah Murid SMP (Swasta)": 268,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 654
+                },
+                {
+                    "Kecamatan": "Krejengan",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 7,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 10,
+                    "Jumlah Guru SMP (Negeri)": 42,
+                    "Jumlah Guru SMP (Swasta)": 58,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 100,
+                    "Jumlah Murid SMP (Negeri)": 597,
+                    "Jumlah Murid SMP (Swasta)": 49,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 646
+                },
+                {
+                    "Kecamatan": "Paiton",
+                    "Jumlah Sekolah SMP (Negeri)": 4,
+                    "Jumlah Sekolah SMP (Swasta)": 9,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 13,
+                    "Jumlah Guru SMP (Negeri)": 78,
+                    "Jumlah Guru SMP (Swasta)": 71,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 149,
+                    "Jumlah Murid SMP (Negeri)": 609,
+                    "Jumlah Murid SMP (Swasta)": 659,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 1268
+                },
+                {
+                    "Kecamatan": "Kotaanyar",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 5,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 7,
+                    "Jumlah Guru SMP (Negeri)": 35,
+                    "Jumlah Guru SMP (Swasta)": 34,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 69,
+                    "Jumlah Murid SMP (Negeri)": 465,
+                    "Jumlah Murid SMP (Swasta)": 28,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 493
+                },
+                {
+                    "Kecamatan": "Besuk",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 9,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 12,
+                    "Jumlah Guru SMP (Negeri)": 34,
+                    "Jumlah Guru SMP (Swasta)": 61,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 95,
+                    "Jumlah Murid SMP (Negeri)": 435,
+                    "Jumlah Murid SMP (Swasta)": 570,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 1005
+                },
+                {
+                    "Kecamatan": "Kraksaan",
+                    "Jumlah Sekolah SMP (Negeri)": 4,
+                    "Jumlah Sekolah SMP (Swasta)": 8,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 12,
+                    "Jumlah Guru SMP (Negeri)": 73,
+                    "Jumlah Guru SMP (Swasta)": 79,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 152,
+                    "Jumlah Murid SMP (Negeri)": 717,
+                    "Jumlah Murid SMP (Swasta)": 846,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 1563
+                },
+                {
+                    "Kecamatan": "Klakah",
+                    "Jumlah Sekolah SMP (Negeri)": 5,
+                    "Jumlah Sekolah SMP (Swasta)": 0,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 5,
+                    "Jumlah Guru SMP (Negeri)": 51,
+                    "Jumlah Guru SMP (Swasta)": 0,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 51,
+                    "Jumlah Murid SMP (Negeri)": 677,
+                    "Jumlah Murid SMP (Swasta)": 0,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 677
+                },
+                {
+                    "Kecamatan": "Lumbang",
+                    "Jumlah Sekolah SMP (Negeri)": 5,
+                    "Jumlah Sekolah SMP (Swasta)": 2,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 7,
+                    "Jumlah Guru SMP (Negeri)": 46,
+                    "Jumlah Guru SMP (Swasta)": 18,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 64,
+                    "Jumlah Murid SMP (Negeri)": 523,
+                    "Jumlah Murid SMP (Swasta)": 187,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 710
+                },
+                {
+                    "Kecamatan": "Tongas",
+                    "Jumlah Sekolah SMP (Negeri)": 4,
+                    "Jumlah Sekolah SMP (Swasta)": 1,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 5,
+                    "Jumlah Guru SMP (Negeri)": 64,
+                    "Jumlah Guru SMP (Swasta)": 13,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 77,
+                    "Jumlah Murid SMP (Negeri)": 845,
+                    "Jumlah Murid SMP (Swasta)": 63,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 908
+                },
+                {
+                    "Kecamatan": "Sumberasih",
+                    "Jumlah Sekolah SMP (Negeri)": 2,
+                    "Jumlah Sekolah SMP (Swasta)": 4,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 6,
+                    "Jumlah Guru SMP (Negeri)": 39,
+                    "Jumlah Guru SMP (Swasta)": 27,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 66,
+                    "Jumlah Murid SMP (Negeri)": 537,
+                    "Jumlah Murid SMP (Swasta)": 328,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 865
+                },
+                {
+                    "Kecamatan": "Wonomerto",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 2,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 5,
+                    "Jumlah Guru SMP (Negeri)": 40,
+                    "Jumlah Guru SMP (Swasta)": 10,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 50,
+                    "Jumlah Murid SMP (Negeri)": 472,
+                    "Jumlah Murid SMP (Swasta)": 135,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 607
+                },
+                {
+                    "Kecamatan": "Dringu",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 6,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 9,
+                    "Jumlah Guru SMP (Negeri)": 50,
+                    "Jumlah Guru SMP (Swasta)": 58,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 108,
+                    "Jumlah Murid SMP (Negeri)": 673,
+                    "Jumlah Murid SMP (Swasta)": 296,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 969
+                },
+                {
+                    "Kecamatan": "Gending",
+                    "Jumlah Sekolah SMP (Negeri)": 4,
+                    "Jumlah Sekolah SMP (Swasta)": 7,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 11,
+                    "Jumlah Guru SMP (Negeri)": 59,
+                    "Jumlah Guru SMP (Swasta)": 55,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 114,
+                    "Jumlah Murid SMP (Negeri)": 579,
+                    "Jumlah Murid SMP (Swasta)": 339,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 918
+                },
+                {
+                    "Kecamatan": "Maroon",
+                    "Jumlah Sekolah SMP (Negeri)": 3,
+                    "Jumlah Sekolah SMP (Swasta)": 6,
+                    "Jumlah Sekolah SMP (Negeri+Swasta)": 9,
+                    "Jumlah Guru SMP (Negeri)": 49,
+                    "Jumlah Guru SMP (Swasta)": 36,
+                    "Jumlah Guru SMP (Negeri+Swasta)": 85,
+                    "Jumlah Murid SMP (Negeri)": 577,
+                    "Jumlah Murid SMP (Swasta)": 251,
+                    "Jumlah Murid SMP (Negeri+Swasta)": 828
+                }
+            ]
+        };
+
+        // Fungsi utility untuk format angka (ribuan)
+        const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        const formatPercentage = (num) => `${num.toFixed(1)}%`;
+        
+        // =================================
+        // BAGIAN 1: UPDATE STATISTIK
+        // =================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const stats = data.stats;
+
+            // Latar Belakang Stats
+            document.getElementById('totalSekolah').textContent = formatNumber(stats.total_sekolah_all);
+            document.getElementById('totalGuru').textContent = formatNumber(stats.total_guru_all);
+            document.getElementById('totalMurid').textContent = formatNumber(stats.total_murid_all);
+            document.getElementById('totalKecamatan').textContent = stats.total_kecamatan;
+            
+            // Latar Belakang Detail
+            document.getElementById('sekolahNegeriCount').textContent = formatNumber(stats.total_sekolah_negeri);
+            document.getElementById('sekolahSwastaCount').textContent = formatNumber(stats.total_sekolah_swasta);
+            document.getElementById('dominasiSwastaPersen').textContent = formatPercentage(stats.dominasi_swasta_percentage);
+
+            document.getElementById('guruNegeriCount').textContent = formatNumber(stats.total_guru_negeri);
+            document.getElementById('guruSwastaCount').textContent = formatNumber(stats.total_guru_swasta);
+            
+            document.getElementById('muridNegeriCount').textContent = formatNumber(stats.total_murid_negeri);
+            document.getElementById('muridSwastaCount').textContent = formatNumber(stats.total_murid_swasta);
+
+            // Calculate Murid/Sekolah percentages for the detail text
+            const muridNegeriPersen = formatPercentage((stats.total_murid_negeri / stats.total_murid_all) * 100);
+            const muridSwastaPersen = formatPercentage((stats.total_murid_swasta / stats.total_murid_all) * 100);
+            document.getElementById('muridNegeriPersen').textContent = muridNegeriPersen;
+            document.getElementById('muridSwastaPersen').textContent = muridSwastaPersen;
+            
+            // Statistik Section
+            document.getElementById('statSekolahNegeri').textContent = formatNumber(stats.total_sekolah_negeri);
+            document.getElementById('statSekolahSwasta').textContent = formatNumber(stats.total_sekolah_swasta);
+            document.getElementById('statDominasiSwasta').textContent = formatPercentage(stats.dominasi_swasta_percentage);
+            document.getElementById('statRasioGuruMurid').textContent = `1:${formatNumber(stats.rasio_guru_murid)}`;
+            
+            document.getElementById('statGuruNegeri').textContent = formatNumber(stats.total_guru_negeri);
+            document.getElementById('statGuruSwasta').textContent = formatNumber(stats.total_guru_swasta);
+            document.getElementById('statMuridNegeri').textContent = formatNumber(stats.total_murid_negeri);
+            document.getElementById('statMuridSwasta').textContent = formatNumber(stats.total_murid_swasta);
+
+            // =================================
+            // BAGIAN 2: PENGISIAN TABEL
+            // =================================
+
+            const tableBody = document.getElementById('table-body');
+            const dataMap = {
+                'Kecamatan': 'Kecamatan',
+                'Jumlah Sekolah SMP (Negeri)': 'Sekolah Negeri',
+                'Jumlah Sekolah SMP (Swasta)': 'Sekolah Swasta',
+                'Jumlah Sekolah SMP (Negeri+Swasta)': 'Total Sekolah',
+                'Jumlah Guru SMP (Negeri)': 'Guru Negeri',
+                'Jumlah Guru SMP (Swasta)': 'Guru Swasta',
+                'Jumlah Guru SMP (Negeri+Swasta)': 'Total Guru',
+                'Jumlah Murid SMP (Negeri)': 'Murid Negeri',
+                'Jumlah Murid SMP (Swasta)': 'Murid Swasta',
+                'Jumlah Murid SMP (Negeri+Swasta)': 'Total Murid'
+            };
+
+            data.table_data.forEach(row => {
+                const tr = document.createElement('tr');
+                const columns = [
+                    'Kecamatan', 
+                    'Jumlah Sekolah SMP (Negeri)', 
+                    'Jumlah Sekolah SMP (Swasta)', 
+                    'Jumlah Sekolah SMP (Negeri+Swasta)', 
+                    'Jumlah Guru SMP (Negeri)', 
+                    'Jumlah Guru SMP (Swasta)', 
+                    'Jumlah Guru SMP (Negeri+Swasta)', 
+                    'Jumlah Murid SMP (Negeri)', 
+                    'Jumlah Murid SMP (Swasta)', 
+                    'Jumlah Murid SMP (Negeri+Swasta)'
+                ];
+                
+                columns.forEach(key => {
+                    const td = document.createElement('td');
+                    // Format angka, kecuali untuk kolom Kecamatan
+                    let value = key === 'Kecamatan' ? row[key] : formatNumber(row[key]);
+                    
+                    // Highlight the 'Total' columns
+                    if (key.includes('(Negeri+Swasta)')) {
+                        td.classList.add('highlight');
+                    }
+                    td.textContent = value;
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+
+            // =================================
+            // BAGIAN 3: INISIALISASI GRAFIK
+            // =================================
+
+            const blueMain = getComputedStyle(document.documentElement).getPropertyValue('--blue-main').trim();
+            const greenAccent = getComputedStyle(document.documentElement).getPropertyValue('--green-accent').trim();
+            const orangeAccent = getComputedStyle(document.documentElement).getPropertyValue('--orange-accent').trim();
+            const blueAccent = getComputedStyle(document.documentElement).getPropertyValue('--blue-accent').trim();
+            const blueLight = getComputedStyle(document.documentElement).getPropertyValue('--blue-light').trim();
+
+            const primaryColors = [blueMain, greenAccent, orangeAccent, blueAccent, '#f1c40f', '#9b59b6', '#3498db', '#e74c3c', '#1abc9c', '#f39c12'];
+            const secondaryColors = [blueLight, '#d1f2eb', '#fdebd0', '#ebf5fb', '#fcf3cf', '#eae0f2', '#ebf5fb', '#f5b7b1', '#d0ece7', '#fcd5b5'];
+
+            // Fungsi untuk membuat Chart Bar
+            const createBarChart = (ctxId, chartData, title, yTitle, color) => {
+                new Chart(document.getElementById(ctxId).getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: yTitle,
+                            data: chartData.data,
+                            backgroundColor: color ? color : primaryColors[0],
+                            borderColor: color ? color : blueMain,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y', // Horizontal bar chart
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: title,
+                                font: {
+                                    size: 16
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: yTitle
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            // Fungsi untuk membuat Chart Pie/Doughnut
+            const createDoughnutChart = (ctxId, chartData, title) => {
+                new Chart(document.getElementById(ctxId).getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: title,
+                            data: chartData.data,
+                            backgroundColor: [blueMain, orangeAccent, greenAccent, blueAccent],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            title: {
+                                display: true,
+                                text: title,
+                                font: {
+                                    size: 16
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            // Chart 1: schoolTypeChart (Doughnut)
+            createDoughnutChart('schoolTypeChart', data.school_type_data, 'Perbandingan Jumlah Sekolah');
+
+            // Chart 2: topStudentsChart (Bar Horizontal)
+            createBarChart('topStudentsChart', data.top_students_data, '10 Kecamatan dengan Total Murid Terbanyak', 'Jumlah Murid', greenAccent);
+
+            // Chart 3: schoolsChart (Bar Horizontal) - Using top 10 for better visualization
+            const topSchoolsData = {
+                labels: data.schools_chart_data.labels.slice(0, 10),
+                data: data.schools_chart_data.data.slice(0, 10)
+            };
+            createBarChart('schoolsChart', topSchoolsData, '10 Kecamatan dengan Total Sekolah Terbanyak', 'Jumlah Sekolah', blueAccent);
+
+            // Chart 4: teacherTypeChart (Doughnut)
+            createDoughnutChart('teacherTypeChart', data.teacher_type_data, 'Perbandingan Jumlah Guru');
+        });
+
+
+        // =================================
+        // BAGIAN 4: FUNGSI INTERAKSI HTML
+        // =================================
+
+        // Fungsi untuk Hamburger Menu
+        function toggleMenu() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Fungsi untuk Navigasi Tab
+        function openTab(tabId, element) {
+            // Hilangkan 'active' dari semua tab content
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Hilangkan 'active' dari semua tombol
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Tambahkan 'active' ke konten yang dipilih
+            document.getElementById(tabId).classList.add('active');
+
+            // Tambahkan 'active' ke tombol yang diklik
+            element.classList.add('active');
+        }
+
+        // Fungsi untuk Form Kontak
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            const successMessage = document.getElementById('formSuccessMessage');
+            
+            // Simulasikan pengiriman data (di lingkungan nyata akan menggunakan AJAX/Fetch)
+            setTimeout(() => {
+                successMessage.style.display = 'block';
+                this.reset(); // Kosongkan form
+                
+                // Sembunyikan pesan sukses setelah beberapa detik
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+            }, 500);
+        });
+
+        // Highlight navigasi saat scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav ul li a');
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 80; // 80px untuk tinggi header
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
