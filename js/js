@@ -1,0 +1,48 @@
+// Fungsi untuk mengontrol tab system
+function openTab(tabId, element) {
+    // Sembunyikan semua konten tab
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Hapus kelas active dari semua tombol tab
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Tampilkan tab yang dipilih dan aktifkan tombolnya
+    document.getElementById(tabId).classList.add('active');
+    element.classList.add('active');
+    
+    // Reload iframe agar peta dirender ulang (opsional)
+    const iframe = document.getElementById(tabId).querySelector('iframe');
+    if (iframe) {
+        // Simpan source asli
+        const src = iframe.src;
+        // Reload iframe
+        iframe.src = '';
+        setTimeout(() => {
+            iframe.src = src;
+        }, 100);
+    }
+}
+// Fungsi untuk mengontrol tab system
+function openTab(tabId, element) {
+    // Sembunyikan semua konten tab
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Hapus kelas active dari semua tombol tab
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Tampilkan tab yang dipilih dan aktifkan tombolnya
+    document.getElementById(tabId).classList.add('active');
+    element.classList.add('active');
+}
